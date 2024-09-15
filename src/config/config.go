@@ -8,8 +8,8 @@ import (
 
 type Config struct {
 	// Application
-	AppHost string `mapstructure:"APP_HOST"`
-	AppPort int    `mapstructure:"APP_PORT"`
+	AppHost           string `mapstructure:"APP_HOST"`
+	AppPort           int    `mapstructure:"APP_PORT"`
 	ReflectionEnabled bool   `mapstructure:"REFLECTION_ENABLED"`
 
 	// Database

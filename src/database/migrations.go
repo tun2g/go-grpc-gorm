@@ -3,10 +3,11 @@ package database
 import (
 	"app/src/lib/logger"
 
+	userModel "app/src/api/user/models"
+
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/urfave/cli"
 	"gorm.io/gorm"
-	userModel "app/src/api/user/models"
 )
 
 var _logger = logger.NewLogger("database")
@@ -27,8 +28,7 @@ func GetMigrations() []*gormigrate.Migration {
 	}
 }
 
-
-func Migration() cli.Command{
+func Migration() cli.Command {
 	cli := cli.Command{
 		Name:  "migration:run",
 		Usage: "Apply all migrations",
@@ -46,7 +46,7 @@ func Migration() cli.Command{
 	return cli
 }
 
-func Rollback() cli.Command{
+func Rollback() cli.Command {
 	cli := cli.Command{
 		Name:  "migration:rollback",
 		Usage: "Rollback the last migration",
@@ -61,9 +61,8 @@ func Rollback() cli.Command{
 			return nil
 		},
 	}
-	return cli;
+	return cli
 }
-
 
 func DropDatabase() cli.Command {
 	return cli.Command{
@@ -78,7 +77,7 @@ func DropDatabase() cli.Command {
 				_logger.Errorf("could not drop database: %s", err)
 				return err
 			}
-			
+
 			_logger.Info("Database dropped successfully!")
 			return nil
 		},

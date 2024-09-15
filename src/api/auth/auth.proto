@@ -11,27 +11,28 @@ service AuthController {
 }
 
 message SignUpRequest {
-  string username = 1;
+  string email = 1;
   string password = 2; 
+  string fullName = 3;
 }
 
 message SignUpResponse {
-  string username = 1;
-  string user_id = 2;
+  string email = 1;
+  string userId = 2;
 }
 
 message SignInRequest {
-  string username = 1;
+  string email = 1;
   string password = 2;  
 }
 
 message SignInResponse {
-  string username = 1;
-  string user_id = 2;
-  Token token = 3;
+  string email = 1;
+  string userId = 2;
+  Tokens tokens = 3;
 }
 
-message Token {
-  string access_token = 1;
-  string refresh_token = 2;
+message Tokens {
+  string accessToken = 1;
+  string refreshToken = 2;
 }

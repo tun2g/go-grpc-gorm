@@ -1,13 +1,12 @@
 package auth
 
-// import (
-// 	dto "app/src/apis/auth/dtos"
-// 	userModel "app/src/api/user/models"
-// 	httpContext "app/src/shared/http-context"
-// )
+import (
+	dtos "app/src/api/auth/dtos"
+	userModel "app/src/api/user/models"
+	"context"
+)
 
-// type IAuthService interface {
-// 	Login(dto *dto.LoginReqDto, ctx *httpContext.CustomContext) (*userModel.User, *dto.TokenResDto, error)
-// 	Register(dto *dto.RegisterReqDto, ctx *httpContext.CustomContext) (*userModel.User, *dto.TokenResDto, error)
-// 	RefreshToken(ctx *httpContext.CustomContext) (*dto.TokenResDto, error)
-// }
+type IAuthService interface {
+	Login(dto *dtos.LoginParamsDto, ctx *context.Context) (*userModel.User, *dtos.TokenResDto, error)
+	Register(dto *dtos.RegisterParamsDto, ctx *context.Context) (*userModel.User, *dtos.TokenResDto, error)
+}

@@ -1,36 +1,46 @@
 package main
 
 import (
-	"fmt"
-	"net"
+	"os"
 
 	server "app/src"
-	"app/src/config"
 	"app/src/database"
 	"app/src/lib/logger"
+
+	"github.com/urfave/cli"
 )
 
+var (
+	client *cli.App
+)
+
+func init() {
+	client = cli.NewApp()
+	client.Name = ""
+	client.Usage = ""
+	client.Version = "0.0.0"
+}
+
 func main() {
-	
-	log := logger.NewLogger("Main")
+	var logger = logger.NewLogger("main")
 
-	connection := database.InitDB()
+	client.Commands = []cli.Command{
+		// RUN: server
+		server.StartServer(),
 
-	s, err := server.NewServer(connection, &config.AppConfiguration)
+		// RUN: run migrate
+		database.Migration(),
 
-	if(err != nil) {
-		log.Errorf("Error creating server: %v", err)
+		// RUN: rollback last migration
+		database.Rollback(),
+
+		// RUN: drop database
+		database.DropDatabase(),
 	}
 
-	s.RegisterService()
-
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", config.AppConfiguration.AppPort))
+	// Run the CLI app
+	err := client.Run(os.Args)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	log.Println("Server is running on port", config.AppConfiguration.AppPort)
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		logger.Fatalf(err.Error())
 	}
 }

@@ -1,158 +1,125 @@
 package auth
 
-// import (
-// 	"context"
+import (
+	"context"
 
-// 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
 
-// 	auth "app/src/api/auth/dtos"
-// 	authDto "app/src/api/auth/dtos"
-// 	authService "app/src/api/auth/services"
-// 	userModel "app/src/api/user/models"
-// 	userRepository "app/src/api/user/repositories"
-// 	userRole "app/src/shared/auth/constants"
-// 	jwt "app/src/shared/jwt"
-// 	utils "app/src/shared/utils"
-// )
+	authDto "app/src/api/auth/dtos"
+	authService "app/src/api/auth/services"
+	userModel "app/src/api/user/models"
+	constants "app/src/api/auth/constants"
+	userRepository "app/src/api/user/repositories"
+	exceptions "app/src/shared/exceptions"
+	jwt "app/src/shared/jwt"
+	"app/src/shared/utils"
+)
 
-// type AuthService struct {
-// 	userRepository         userRepository.IUserRepository
-// 	jwtAccessTokenManager  *jwt.JWTManager
-// 	jwtRefreshTokenManager *jwt.JWTManager
-// 	bcrypt                 *utils.BcryptEncoder
-// }
+type AuthService struct {
+	userRepository         userRepository.IUserRepository
+	jwtAccessTokenManager  *jwt.JWTManager
+	jwtRefreshTokenManager *jwt.JWTManager
+	bcrypt                 *utils.BcryptEncoder
+}
 
-// func NewAuthService(
-// 	userRepository *userRepository.IUserRepository,
-// 	jwtAccessTokenManager *jwt.JWTManager,
-// 	jwtRefreshTokenManager *jwt.JWTManager,
-// 	bcrypt *utils.BcryptEncoder,
-// ) authService.IAuthService {
-// 	return &AuthService{
-// 		userRepository:         *userRepository,
-// 		jwtAccessTokenManager:  jwtAccessTokenManager,
-// 		jwtRefreshTokenManager: jwtRefreshTokenManager,
-// 		bcrypt:                 bcrypt,
-// 	}
-// }
+func NewAuthService(
+	userRepository *userRepository.IUserRepository,
+	jwtAccessTokenManager *jwt.JWTManager,
+	jwtRefreshTokenManager *jwt.JWTManager,
+	bcrypt *utils.BcryptEncoder,
+) authService.IAuthService {
+	return &AuthService{
+		userRepository:         *userRepository,
+		jwtAccessTokenManager:  jwtAccessTokenManager,
+		jwtRefreshTokenManager: jwtRefreshTokenManager,
+		bcrypt:                 bcrypt,
+	}
+}
 
-// func (srv *AuthService) Login(
-// 	dto *authDto.LoginReqDto,
-// 	ctx *context.Context,
-// ) (*userModel.User, *authDto.TokenResDto, error) {
-// 	var err error
+func (srv *AuthService) Login(
+	dto *authDto.LoginParamsDto,
+	ctx *context.Context,
+) (*userModel.User, *authDto.TokenResDto, error) {
+	var err error
 
-// 	user, err := srv.userRepository.FindOneBy(&userModel.User{Email: dto.Email})
-// 	if err != nil {
-// 		return nil, nil, err
-// 	}
+	user, err := srv.userRepository.FindOneBy(&userModel.User{Email: dto.Email})
+	if err != nil {
+		return nil, nil, err
+	}
 
-// 	if user == nil {
-// 		err = exception.NewBadRequestException(
-// 			ctx.GetRequestId(),
-// 			[]exception.ErrorDetail{{
-// 				Issue: "Email or password is invalid",
-// 			}},
-// 		)
-// 		return nil, nil, err
-// 	}
+	if user == nil {
+		err = exceptions.ThrowGrpcError(
+			codes.InvalidArgument, 
+			"Cannot find user",
+			"",	
+		)
+		return nil, nil, err
+	}
 
-// 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(dto.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(dto.Password))
 
-// 	if err != nil {
-// 		err = exception.NewBadRequestException(
-// 			ctx.GetRequestId(),
-// 			[]exception.ErrorDetail{{
-// 				Issue: "Email or password is invalid",
-// 			}},
-// 		)
-// 		return nil, nil, err
-// 	}
+	if err != nil {
+		err = exceptions.ThrowGrpcError(
+			codes.InvalidArgument,
+			"Invalid username or password",
+			"",
+		)
+		return nil, nil, err
+	}
 
-// 	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user)
-// 	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(user)
-// 	tokens := auth.TokenResDto{
-// 		AccessToken:  accessToken,
-// 		RefreshToken: refreshToken,
-// 	}
+	accessToken, _, _ := srv.jwtAccessTokenManager.CreateToken(user)
+	refreshToken, _, _ := srv.jwtRefreshTokenManager.CreateToken(user)
+	tokens := authDto.TokenResDto{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
 
-// 	return user, &tokens, nil
-// }
+	return user, &tokens, nil
+}
 
-// func (srv *AuthService) Register(
-// 	dto *authDto.RegisterReqDto,
-// 	ctx *httpContext.CustomContext,
-// ) (*userModel.User, *authDto.TokenResDto, error) {
-// 	var err error
+func (srv *AuthService) Register(
+	dto *authDto.RegisterParamsDto,
+	ctx *context.Context,
+) (*userModel.User, *authDto.TokenResDto, error) {
+	var err error
 
-// 	user, err := srv.userRepository.FindOneBy(&userModel.User{
-// 		Email: dto.Email,
-// 	})
+	user, err := srv.userRepository.FindOneBy(&userModel.User{
+		Email: dto.Email,
+	})
 
-// 	if user != nil {
-// 		err = exception.NewBadRequestException(
-// 			ctx.GetRequestId(),
-// 			[]exception.ErrorDetail{{
-// 				Issue:   "Email is already in use",
-// 				Field:   "email",
-// 				IssueId: "exists_email",
-// 			}},
-// 		)
-// 		return nil, nil, err
-// 	}
+	if user != nil {
+		err = exceptions.ThrowGrpcError(
+			codes.AlreadyExists,
+			"Email is already in use",
+			constants.ERR_EXISTED_EMAIL,
+		)
+		return nil, nil, err
+	}
 
-// 	if err != nil {
-// 		return nil, nil, err
-// 	}
+	if err != nil {
+		return nil, nil, err
+	}
 
-// 	hashedPassword, err := srv.bcrypt.Encrypt(dto.Password)
+	hashedPassword, _ := srv.bcrypt.Encrypt(dto.Password)
 
-// 	user, err = srv.userRepository.Create(&userModel.User{
-// 		Email:    dto.Email,
-// 		Password: hashedPassword,
-// 		FullName: dto.FullName,
-// 		Role:     userRole.RoleUser.String(),
-// 	})
+	user, err = srv.userRepository.Create(&userModel.User{
+		Email:    dto.Email,
+		Password: hashedPassword,
+		FullName: dto.FullName,
+		Role:     constants.RoleUser.String(),
+	})
 
-// 	if err != nil {
-// 		return nil, nil, err
-// 	}
+	if err != nil {
+		return nil, nil, err
+	}
 
-// 	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user)
-// 	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(user)
-// 	tokens := auth.TokenResDto{
-// 		AccessToken:  accessToken,
-// 		RefreshToken: refreshToken,
-// 	}
-// 	return user, &tokens, nil
-// }
+	accessToken, _, _ := srv.jwtAccessTokenManager.CreateToken(user)
+	refreshToken, _, _ := srv.jwtRefreshTokenManager.CreateToken(user)
 
-// func (srv *AuthService) RefreshToken(ctx *httpContext.CustomContext) (*authDto.TokenResDto, error) {
-// 	user := ctx.GetUser()
-
-// 	if user == nil {
-// 		err := exception.NewUnauthorizedException(ctx.GetRequestId())
-// 		return nil, err
-// 	}
-
-// 	_user, err := srv.userRepository.FindOneBy(&userModel.User{Email: user.Email})
-
-// 	if user == nil {
-// 		err := exception.NewUnauthorizedException(ctx.GetRequestId())
-// 		return nil, err
-// 	}
-
-// 	if err != nil {
-// 		err := exception.NewUnauthorizedException(ctx.GetRequestId())
-// 		return nil, err
-// 	}
-
-// 	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(_user)
-// 	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(_user)
-// 	tokens := auth.TokenResDto{
-// 		AccessToken:  accessToken,
-// 		RefreshToken: refreshToken,
-// 	}
-
-// 	return &tokens, nil
-// }
+	tokens := authDto.TokenResDto{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+	return user, &tokens, nil
+}

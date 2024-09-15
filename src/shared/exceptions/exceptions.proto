@@ -5,13 +5,9 @@ package exceptions;
 option go_package = "proto/exceptions";
 
 
-message ErrorDetail {
-  string username = 1;
-  string password = 2; 
-}
-
 message GRPCErrorResponse {
   string requestId = 1;
-  string message = 2;
-  repeated ErrorDetail details = 3;
+  int32 code = 2;
+  string message = 3;
+  string issueId = 4;
 }
