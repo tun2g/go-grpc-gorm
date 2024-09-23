@@ -4,10 +4,14 @@ package exceptions;
 
 option go_package = "proto/exceptions";
 
+message ErrorDetail {
+  string issue = 1;
+  string issueId = 2;
+  string field = 3;
+  string requestId = 4;
+}
 
 message GRPCErrorResponse {
-  string requestId = 1;
   int32 code = 2;
-  string message = 3;
-  string issueId = 4;
+  ErrorDetail errorDetail = 3;
 }

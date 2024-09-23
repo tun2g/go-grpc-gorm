@@ -20,21 +20,90 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ErrorDetail struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Issue     string `protobuf:"bytes,1,opt,name=issue,proto3" json:"issue,omitempty"`
+	IssueId   string `protobuf:"bytes,2,opt,name=issueId,proto3" json:"issueId,omitempty"`
+	Field     string `protobuf:"bytes,3,opt,name=field,proto3" json:"field,omitempty"`
+	RequestId string `protobuf:"bytes,4,opt,name=requestId,proto3" json:"requestId,omitempty"`
+}
+
+func (x *ErrorDetail) Reset() {
+	*x = ErrorDetail{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_src_shared_exceptions_exceptions_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ErrorDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ErrorDetail) ProtoMessage() {}
+
+func (x *ErrorDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_src_shared_exceptions_exceptions_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ErrorDetail.ProtoReflect.Descriptor instead.
+func (*ErrorDetail) Descriptor() ([]byte, []int) {
+	return file_src_shared_exceptions_exceptions_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ErrorDetail) GetIssue() string {
+	if x != nil {
+		return x.Issue
+	}
+	return ""
+}
+
+func (x *ErrorDetail) GetIssueId() string {
+	if x != nil {
+		return x.IssueId
+	}
+	return ""
+}
+
+func (x *ErrorDetail) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+func (x *ErrorDetail) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
 type GRPCErrorResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RequestId string `protobuf:"bytes,1,opt,name=requestId,proto3" json:"requestId,omitempty"`
-	Code      int32  `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
-	Message   string `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
-	IssueId   string `protobuf:"bytes,4,opt,name=issueId,proto3" json:"issueId,omitempty"`
+	Code        int32        `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
+	ErrorDetail *ErrorDetail `protobuf:"bytes,3,opt,name=errorDetail,proto3" json:"errorDetail,omitempty"`
 }
 
 func (x *GRPCErrorResponse) Reset() {
 	*x = GRPCErrorResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_src_shared_exceptions_exceptions_proto_msgTypes[0]
+		mi := &file_src_shared_exceptions_exceptions_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -47,7 +116,7 @@ func (x *GRPCErrorResponse) String() string {
 func (*GRPCErrorResponse) ProtoMessage() {}
 
 func (x *GRPCErrorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_src_shared_exceptions_exceptions_proto_msgTypes[0]
+	mi := &file_src_shared_exceptions_exceptions_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -60,14 +129,7 @@ func (x *GRPCErrorResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GRPCErrorResponse.ProtoReflect.Descriptor instead.
 func (*GRPCErrorResponse) Descriptor() ([]byte, []int) {
-	return file_src_shared_exceptions_exceptions_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *GRPCErrorResponse) GetRequestId() string {
-	if x != nil {
-		return x.RequestId
-	}
-	return ""
+	return file_src_shared_exceptions_exceptions_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GRPCErrorResponse) GetCode() int32 {
@@ -77,18 +139,11 @@ func (x *GRPCErrorResponse) GetCode() int32 {
 	return 0
 }
 
-func (x *GRPCErrorResponse) GetMessage() string {
+func (x *GRPCErrorResponse) GetErrorDetail() *ErrorDetail {
 	if x != nil {
-		return x.Message
+		return x.ErrorDetail
 	}
-	return ""
-}
-
-func (x *GRPCErrorResponse) GetIssueId() string {
-	if x != nil {
-		return x.IssueId
-	}
-	return ""
+	return nil
 }
 
 var File_src_shared_exceptions_exceptions_proto protoreflect.FileDescriptor
@@ -97,16 +152,22 @@ var file_src_shared_exceptions_exceptions_proto_rawDesc = []byte{
 	0x0a, 0x26, 0x73, 0x72, 0x63, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f, 0x65, 0x78, 0x63,
 	0x65, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2f, 0x65, 0x78, 0x63, 0x65, 0x70, 0x74, 0x69, 0x6f,
 	0x6e, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0a, 0x65, 0x78, 0x63, 0x65, 0x70, 0x74,
-	0x69, 0x6f, 0x6e, 0x73, 0x22, 0x79, 0x0a, 0x11, 0x47, 0x52, 0x50, 0x43, 0x45, 0x72, 0x72, 0x6f,
-	0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x72, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x72, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d,
-	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65,
-	0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x69, 0x73, 0x73, 0x75, 0x65, 0x49, 0x64,
-	0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x69, 0x73, 0x73, 0x75, 0x65, 0x49, 0x64, 0x42,
-	0x12, 0x5a, 0x10, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x78, 0x63, 0x65, 0x70, 0x74, 0x69,
-	0x6f, 0x6e, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x6f, 0x6e, 0x73, 0x22, 0x71, 0x0a, 0x0b, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x44, 0x65, 0x74,
+	0x61, 0x69, 0x6c, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x73, 0x73, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x69, 0x73, 0x73, 0x75, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x69, 0x73, 0x73,
+	0x75, 0x65, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x69, 0x73, 0x73, 0x75,
+	0x65, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x12, 0x1c, 0x0a, 0x09, 0x72, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x49, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x72, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x49, 0x64, 0x22, 0x62, 0x0a, 0x11, 0x47, 0x52, 0x50, 0x43, 0x45,
+	0x72, 0x72, 0x6f, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04,
+	0x63, 0x6f, 0x64, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65,
+	0x12, 0x39, 0x0a, 0x0b, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x65, 0x78, 0x63, 0x65, 0x70, 0x74, 0x69, 0x6f,
+	0x6e, 0x73, 0x2e, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x52, 0x0b,
+	0x65, 0x72, 0x72, 0x6f, 0x72, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x42, 0x12, 0x5a, 0x10, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x78, 0x63, 0x65, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -121,16 +182,18 @@ func file_src_shared_exceptions_exceptions_proto_rawDescGZIP() []byte {
 	return file_src_shared_exceptions_exceptions_proto_rawDescData
 }
 
-var file_src_shared_exceptions_exceptions_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_src_shared_exceptions_exceptions_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_src_shared_exceptions_exceptions_proto_goTypes = []interface{}{
-	(*GRPCErrorResponse)(nil), // 0: exceptions.GRPCErrorResponse
+	(*ErrorDetail)(nil),       // 0: exceptions.ErrorDetail
+	(*GRPCErrorResponse)(nil), // 1: exceptions.GRPCErrorResponse
 }
 var file_src_shared_exceptions_exceptions_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: exceptions.GRPCErrorResponse.errorDetail:type_name -> exceptions.ErrorDetail
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_src_shared_exceptions_exceptions_proto_init() }
@@ -140,6 +203,18 @@ func file_src_shared_exceptions_exceptions_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_src_shared_exceptions_exceptions_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ErrorDetail); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_src_shared_exceptions_exceptions_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GRPCErrorResponse); i {
 			case 0:
 				return &v.state
@@ -158,7 +233,7 @@ func file_src_shared_exceptions_exceptions_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_src_shared_exceptions_exceptions_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

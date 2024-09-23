@@ -12,20 +12,18 @@ import (
 )
 
 type GrpcError struct {
-	Message string
-	Code    codes.Code
-	IssueId string
+	Code        codes.Code
+	ErrorDetail *pb.ErrorDetail
 }
 
 func (e GrpcError) Error() string {
-	return e.Message
+	return "GRPC Server error"
 }
 
-func ThrowGrpcError(code codes.Code, message string, issueId string) GrpcError {
+func ThrowGrpcError(code codes.Code, errorDetail *pb.ErrorDetail) GrpcError {
 	return GrpcError{
-		Message: message,
-		Code:    code,
-		IssueId: issueId,
+		Code:        code,
+		ErrorDetail: errorDetail,
 	}
 }
 
@@ -38,22 +36,23 @@ func HandleGrpcError(err error, ctx *context.Context) error {
 	if len(requestIds) > 0 {
 		requestId = requestIds[0]
 	}
-	log.Error(err)
 
 	var errorResponse pb.GRPCErrorResponse
 	var statusErr *status.Status
-	errorResponse.RequestId = requestId
 
 	if customErr, ok := err.(GrpcError); ok {
-		errorResponse.Message = customErr.Message
-		errorResponse.IssueId = customErr.IssueId
 		errorResponse.Code = int32(customErr.Code)
-		statusErr = status.New(codes.Code(errorResponse.Code), errorResponse.Message)
+		statusErr = status.New(codes.Code(errorResponse.Code), "GRPC Server error")
+		errorResponse.ErrorDetail = customErr.ErrorDetail
+
 	} else {
-		errorResponse.Message = err.Error()
-		statusErr = status.New(codes.Internal, "Internal Server Error")
+		statusErr = status.New(codes.Internal, "GRPC Server error")
 	}
 
-	statusErr, _ = statusErr.WithDetails(&errorResponse)
+	errorResponse.ErrorDetail.RequestId = requestId
+
+	log.Error(errorResponse.ErrorDetail)
+	statusErr, _ = statusErr.WithDetails(errorResponse.ErrorDetail)
+
 	return statusErr.Err()
 }

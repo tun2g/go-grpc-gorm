@@ -24,8 +24,10 @@ func MetadataInterceptor() grpc.UnaryServerInterceptor {
 		} else {
 			requestID = uuid.New().String()
 		}
+		md = metadata.Pairs(constants.RequestIDKey, requestID)
 
-		ctx = metadata.AppendToOutgoingContext(ctx, constants.RequestIDKey, requestID)
+		ctx = metadata.NewIncomingContext(ctx, md)
+
 		return handler(ctx, req)
 	}
 }

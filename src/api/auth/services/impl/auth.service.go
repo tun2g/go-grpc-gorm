@@ -6,10 +6,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 
+	exceptionPb "app/proto/exceptions"
+	constants "app/src/api/auth/constants"
 	authDto "app/src/api/auth/dtos"
 	authService "app/src/api/auth/services"
 	userModel "app/src/api/user/models"
-	constants "app/src/api/auth/constants"
 	userRepository "app/src/api/user/repositories"
 	exceptions "app/src/shared/exceptions"
 	jwt "app/src/shared/jwt"
@@ -50,9 +51,10 @@ func (srv *AuthService) Login(
 
 	if user == nil {
 		err = exceptions.ThrowGrpcError(
-			codes.InvalidArgument, 
-			"Cannot find user",
-			"",	
+			codes.InvalidArgument,
+			&exceptionPb.ErrorDetail{
+				Issue: "Cannot find user",
+			},
 		)
 		return nil, nil, err
 	}
@@ -62,8 +64,9 @@ func (srv *AuthService) Login(
 	if err != nil {
 		err = exceptions.ThrowGrpcError(
 			codes.InvalidArgument,
-			"Invalid username or password",
-			"",
+			&exceptionPb.ErrorDetail{
+				Issue: "Invalid username or password",
+			},
 		)
 		return nil, nil, err
 	}
@@ -91,8 +94,9 @@ func (srv *AuthService) Register(
 	if user != nil {
 		err = exceptions.ThrowGrpcError(
 			codes.AlreadyExists,
-			"Email is already in use",
-			constants.ERR_EXISTED_EMAIL,
+			&exceptionPb.ErrorDetail{
+				Issue: "Email is already in use",
+			},
 		)
 		return nil, nil, err
 	}
