@@ -2,12 +2,24 @@ syntax = "proto3";
 
 package auth;
 
+import "google/api/annotations.proto";
 
 option go_package = "proto/auth";
 
 service AuthController {
-  rpc SignUp(SignUpRequest) returns (SignUpResponse) {};
-  rpc SignIn(SignInRequest) returns (SignInResponse) {};
+  rpc SignUp(SignUpRequest) returns (SignUpResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/sign-up"
+      body: "*"
+    };
+  };
+
+  rpc SignIn(SignInRequest) returns (SignInResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/auth/sign-in"
+      body: "*"
+    };
+  };
 }
 
 message SignUpRequest {
